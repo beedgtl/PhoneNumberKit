@@ -298,7 +298,7 @@ public final class PhoneNumberKit: NSObject {
         let networkInfo = CTTelephonyNetworkInfo()
         var carrier: CTCarrier? = nil
         if #available(iOS 12.0, *) {
-            carrier = networkInfo.serviceSubscriberCellularProviders?.values.first
+            carrier = networkInfo.serviceSubscriberCellularProviders?.values?.compactMap({ $0 }).first
         } else {
             carrier = networkInfo.subscriberCellularProvider
         }
@@ -322,7 +322,7 @@ public final class PhoneNumberKit: NSObject {
     ///
     /// - returns: an optional Data representation of the metadata.
     public static func defaultMetadataCallback() throws -> Data? {
-        let frameworkBundle = Bundle.module
+        let frameworkBundle = Bundle.phoneNumberKit
         guard let jsonPath = frameworkBundle.path(forResource: "PhoneNumberMetadata", ofType: "json") else {
             throw PhoneNumberError.metadataNotFound
         }
