@@ -13,7 +13,7 @@ import CoreTelephony
 
 public typealias MetadataCallback = (() throws -> Data?)
 
-public final class PhoneNumberKit: NSObject {
+public class PhoneNumberKit: NSObject {
     // Manager objects
     let metadataManager: MetadataManager
     let parseManager: ParseManager
@@ -22,7 +22,9 @@ public final class PhoneNumberKit: NSObject {
     // MARK: Lifecycle
 
     public init(metadataCallback: @escaping MetadataCallback = PhoneNumberKit.defaultMetadataCallback) {
-        self.metadataManager = MetadataManager(metadataCallback: metadataCallback)
+      self.metadataManager = MetadataManager(metadataCallback: {
+        try metadataCallback()
+      })
         self.parseManager = ParseManager(metadataManager: self.metadataManager, regexManager: self.regexManager)
     }
 
@@ -298,7 +300,7 @@ public final class PhoneNumberKit: NSObject {
         let networkInfo = CTTelephonyNetworkInfo()
         var carrier: CTCarrier? = nil
         if #available(iOS 12.0, *) {
-            carrier = networkInfo.serviceSubscriberCellularProviders?.values?.compactMap({ $0 }).first
+            carrier = networkInfo.serviceSubscriberCellularProviders?.values.compactMap({ $0 }).first
         } else {
             carrier = networkInfo.subscriberCellularProvider
         }

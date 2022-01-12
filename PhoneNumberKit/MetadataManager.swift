@@ -20,7 +20,9 @@ final class MetadataManager {
     ///
     /// - Parameter metadataCallback: a closure that returns metadata as JSON Data.
     public init(metadataCallback: MetadataCallback) {
-        self.territories = self.populateTerritories(metadataCallback: metadataCallback)
+      self.territories = self.populateTerritories(metadataCallback: {
+        try metadataCallback()
+      })
         for item in self.territories {
             var currentTerritories: [MetadataTerritory] = self.territoriesByCode[item.countryCode] ?? [MetadataTerritory]()
             // In the case of multiple countries sharing a calling code, such as the NANPA countries,
